@@ -1,8 +1,10 @@
 // I Installed types in DevDependecies - This will ensure that the library is available during the compilation process and that your source code can reference its classes and methods
 import express, { Application } from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import "dotenv/config";
 import Controller from "./tools/controller.interface";
+import path from "path";
 
 class App {
   public express: Application;
