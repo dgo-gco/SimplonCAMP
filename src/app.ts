@@ -17,12 +17,22 @@ class App {
     this.port = port;
 
     this.inizializarLosMiddleware();
+    this.inizializarCors();
     this.inizializarYConectarBaseDatos();
     this.inizializarLosControllers(controllers);
   }
 
   private inizializarLosMiddleware(): void {
     this.express.use(express.urlencoded({ extended: true }));
+    this.express.use(express.json())
+    this.express.use('/uploads', express.static(path.join('uploads')));
+  }
+
+  private inizializarCors(): void {
+    this.express.use(cors({ 
+      origin: "http://localhost:3000", 
+      credentials: true 
+     }))
   }
 
   private inizializarYConectarBaseDatos(): void {
@@ -32,20 +42,20 @@ class App {
     async function main() {
       await mongoose.connect(MONGODB_URI!);
       console.log("Connected to MongoDB");
-    }
+    }  
   }
 
   public listen(): void {
     this.express.listen(this.port, () => {
-        console.log(`App is successfully listening on port ${this.port}`)
-    })
+      console.log(`App is successfully listening on port ${this.port}`);
+    });
   }
 
   private inizializarLosControllers(controllers: Controller[]): void {
     controllers.forEach((control: Controller) => {
-        this.express.use('/api', control.router)
-    })
+      this.express.use("/api", control.router);
+    });
   }
 }
 
-export default App
+export default App;
