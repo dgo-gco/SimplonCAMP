@@ -13,15 +13,31 @@ class UserController implements Controller {
   }
 
   initializeRoute() {
+    this.router.get(`${this.path}/get-users`, this.getUsers);
     this.router.post(`${this.path}/register`, this.register);
     this.router.post(`${this.path}/login`, this.logIn);
     this.router.put(`${this.path}/update/:id`, this.editUser);
     this.router.delete(`${this.path}/delete/:id`, this.deleteUser);
   }
 
+  getUsers = async (req: Request, res: Response) => {
+    try {
+      const allUsers = await User.find({})
+      return res.status(200).json({
+        msg: 'All users here',
+        allUsers
+      })
+    } catch (error) {
+      return res.status(500).json({
+        msg: "Ups! Something went wrong",
+      });
+    }
+  }
+
   register = async (req: Request, res: Response) => {
     try {
       const { username, email, password } = req.body;
+      console.log(email)
       if (!(username || email || password)) {
         return res.status(200).json({
           msg: "All fields are required",

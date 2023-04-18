@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import App from './app'
+import { CampingController } from "./controllers/camping.controller";
 import UserController from "./controllers/userController";
 dotenv.config();
 
@@ -7,6 +8,7 @@ dotenv.config();
 const app = new App(
   [
     new UserController(),
+    new CampingController()
   ],
   Number(process.env.PORT)
 );
