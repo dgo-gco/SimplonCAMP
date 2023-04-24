@@ -1,18 +1,36 @@
-import { Request, Response, Router } from "express";
+import express, { Application, Request, Response, Router } from "express";
 import Camping from "../models/camping.model";
 import Controller from "../tools/controller.interface";
 import { upload } from "../middlewares/upload";
+import { isAuth } from "../utils/check-auth"
+import verifyToken from "../middlewares/verifyJWT"
 
+declare global {
+  namespace Express {
+      interface Request {
+          user: any;
+          verifyToken: any;
+      }
+  }
+}
 export class CampingController implements Controller {
   path = "/camping";
   router = Router();
 
+  public express: Application;
+
   constructor() {
+    this.express = express();
     this.initializeRoute();
+    // this.protectRoutes()
   }
 
+  // protectRoutes() {
+  //   this.express.use(verifyToken)
+  // }
+
   initializeRoute() {
-    this.router.get(`${this.path}/get-campings`, this.getCampingInfo)
+    this.router.get(`${this.path}/get-campings`, verifyToken, this.getCampingInfo)
     this.router.post(
       `${this.path}/add-camping`,
       upload.single("img"),
@@ -37,6 +55,8 @@ export class CampingController implements Controller {
   };
 
   createCamping = async (req: Request, res: Response) => {
+    const user = isAuth({ req })
+    console.log(user)
     try {
       const newCamping = await Camping.create({
         img: req.file!.path,

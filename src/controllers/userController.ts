@@ -1,17 +1,35 @@
-import { Request, Response, Router } from "express";
+import express, { Application, Request, Response, Router } from "express";
 import User from "../models/userModel";
 import Controller from "../tools/controller.interface";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import verifyToken from "../middlewares/verifyJWT"
+
+declare global {
+  namespace Express {
+      interface Request {
+          user: any;
+          verifyToken: any;
+      }
+  }
+}
 
 class UserController implements Controller {
   path = "/users";
   router = Router();
 
-  constructor() {
-    this.initializeRoute();
-  }
+  public express: Application;
 
+  constructor() {
+    this.express = express();
+    this.initializeRoute();
+    this.protectRoutes()
+  }
+  
+  protectRoutes() {
+    this.express.use(verifyToken)
+  }
+  
   initializeRoute() {
     this.router.get(`${this.path}/get-users`, this.getUsers);
     this.router.post(`${this.path}/register`, this.register);
@@ -19,6 +37,7 @@ class UserController implements Controller {
     this.router.put(`${this.path}/update/:id`, this.editUser);
     this.router.delete(`${this.path}/delete/:id`, this.deleteUser);
   }
+
 
   getUsers = async (req: Request, res: Response) => {
     try {
