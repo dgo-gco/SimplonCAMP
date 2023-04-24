@@ -5,6 +5,7 @@ import cors from "cors";
 import "dotenv/config";
 import Controller from "./tools/controller.interface";
 import path from "path";
+import cookieParser from 'cookie-parser';
 
 class App {
   public express: Application;
@@ -26,6 +27,7 @@ class App {
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use(express.json())
     this.express.use('/uploads', express.static(path.join('uploads')));
+    this.express.use(cookieParser())
   }
 
   private inizializarCors(): void {
