@@ -9,7 +9,11 @@ const campingSchema = new Schema({
   user: {
      type: mongoose.Schema.Types.ObjectId, ref: 'User' 
   }
-});
+}, 
+{
+  timestamps: true
+}
+);
 
 const Camping = mongoose.model<ICamping>('Camping', campingSchema)
 export default Camping
